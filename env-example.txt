@@ -1,0 +1,12 @@
+# Devnet Configuration - Apex Protocol Successfully Deployed!
+# Copy this content to .env.local
+
+# Your deployed Apex Protocol on Devnet
+NEXT_PUBLIC_RPC_ENDPOINT=https://api.devnet.solana.com
+NEXT_PUBLIC_APEX_PROGRAM_ID=14UeMM8EJ4zqvU5B3P9RvdYEwA9UCcNnU6GidEuv3LWd
+NEXT_PUBLIC_NETWORK=devnet
+
+# Alternative with custom RPC endpoint (recommended for production)
+# NEXT_PUBLIC_RPC_ENDPOINT=https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY
+# NEXT_PUBLIC_APEX_PROGRAM_ID=14UeMM8EJ4zqvU5B3P9RvdYEwA9UCcNnU6GidEuv3LWd
+# NEXT_PUBLIC_NETWORK=devnet
