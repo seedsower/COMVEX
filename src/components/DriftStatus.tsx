@@ -161,3 +161,5 @@ export const DriftStatus: React.FC = () => {
         </div>
     );
 };
+
+export default DriftStatus;
