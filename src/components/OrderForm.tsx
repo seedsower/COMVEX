@@ -10,7 +10,7 @@ interface OrderFormProps {
 
 export default function OrderForm({ className = '' }: OrderFormProps) {
   const { connected } = useWallet();
-  const { driftClient, isLoading, error, placeOrder, isConnected } = useDriftClient();
+  const { isLoading, error, placeOrder, isConnected } = useDriftClient();
   
   const [formData, setFormData] = useState({
     marketIndex: 0,
@@ -76,8 +76,9 @@ export default function OrderForm({ className = '' }: OrderFormProps) {
         orderType: 'market'
       });
 
-    } catch (err: any) {
-      setOrderResult(`❌ Order failed: ${err.message}`);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setOrderResult(`❌ Order failed: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }

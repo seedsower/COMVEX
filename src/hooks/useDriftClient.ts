@@ -1,16 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import { getEnvironmentConfig } from '../config/environment';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 // Mock DriftClient interface for development
+interface UserAccount {
+  authority: string;
+  subAccountId: number;
+  collateral: number;
+  positions: unknown[];
+}
+
+interface Market {
+  marketIndex: number;
+  symbol: string;
+  baseAsset: string;
+}
+
 interface MockDriftClient {
   isSubscribed: boolean;
   subscribe: () => Promise<void>;
   unsubscribe: () => Promise<void>;
   placeOrder: (params: OrderParams) => Promise<string>;
-  getUserAccount: () => any;
-  getMarkets: () => any[];
+  getUserAccount: () => UserAccount;
+  getMarkets: () => Market[];
 }
 
 interface OrderParams {
@@ -23,7 +34,6 @@ interface OrderParams {
 
 export function useDriftClient() {
   const { publicKey, connected } = useWallet();
-  const { connection } = useConnection();
   const [driftClient, setDriftClient] = useState<MockDriftClient | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,27 +48,25 @@ export function useDriftClient() {
     setError(null);
 
     try {
-      const config = getEnvironmentConfig();
-      
       // Mock DriftClient for development
       const mockClient: MockDriftClient = {
         isSubscribed: false,
         subscribe: async () => {
-          console.log('📡 DriftClient subscribed');
+          console.log(' DriftClient subscribed');
           mockClient.isSubscribed = true;
         },
         unsubscribe: async () => {
-          console.log('📡 DriftClient unsubscribed');
+          console.log(' DriftClient unsubscribed');
           mockClient.isSubscribed = false;
         },
         placeOrder: async (params: OrderParams) => {
-          console.log('📝 Placing order:', params);
+          console.log(' Placing order:', params);
           // Simulate order placement
           await new Promise(resolve => setTimeout(resolve, 1000));
           return 'mock_signature_' + Date.now();
         },
-        getUserAccount: () => ({
-          authority: publicKey,
+        getUserAccount: (): UserAccount => ({
+          authority: publicKey?.toString() || '',
           subAccountId: 0,
           collateral: 1000,
           positions: []
@@ -73,25 +81,32 @@ export function useDriftClient() {
       await mockClient.subscribe();
       setDriftClient(mockClient);
       
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(errorMessage);
       console.error('Failed to initialize DriftClient:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [publicKey, connected, connection]);
+  }, [publicKey, connected]);
 
   useEffect(() => {
-    initializeDriftClient();
+    if (connected && publicKey) {
+      initializeDriftClient();
+    } else {
+      setDriftClient(null);
+    }
+  }, [connected, publicKey, initializeDriftClient]);
 
+  useEffect(() => {
     return () => {
       if (driftClient?.isSubscribed) {
         driftClient.unsubscribe().catch(console.error);
       }
     };
-  }, [initializeDriftClient]);
+  }, [driftClient]);
 
-  const placeOrder = useCallback(async (params: OrderParams) => {
+  const placeOrder = useCallback(async (params: OrderParams): Promise<string> => {
     if (!driftClient) {
       throw new Error('DriftClient not initialized');
     }

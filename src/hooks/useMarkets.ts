@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import { getEnvironmentConfig } from '@/config/environment';
+import { getEnvironmentConfig } from '../config/environment';
 
 export interface MarketData {
   marketIndex: number;

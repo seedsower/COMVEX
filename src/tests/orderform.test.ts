@@ -31,11 +31,12 @@ class OrderFormTester {
         message: 'Test passed',
         duration: Date.now() - startTime
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       this.results.push({
         name,
         passed: false,
-        message: error.message,
+        message: errorMessage,
         duration: Date.now() - startTime
       });
     }
@@ -105,14 +106,6 @@ class OrderFormTester {
 
   async testMockOrderPlacement(): Promise<void> {
     await this.runTest('Mock Order Placement', async () => {
-      // Test the mock order placement functionality
-      const mockOrderParams = {
-        marketIndex: 0,
-        direction: 'long' as const,
-        baseAssetAmount: 1.0,
-        orderType: 'market' as const
-      };
-      
       // Simulate order placement delay
       await new Promise(resolve => setTimeout(resolve, 100));
       
