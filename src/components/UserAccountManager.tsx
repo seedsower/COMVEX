@@ -163,7 +163,7 @@ export default function UserAccountManager() {
         <h3 className="text-lg font-semibold text-white mb-2">How It Works</h3>
         <div className="text-sm text-gray-300 space-y-2">
           <p><strong>1. Initialize Account:</strong> Creates your unique Program Derived Address (PDA) on the protocol.</p>
-          <p><strong>2. Deposit USDC:</strong> Transfers USDC from your wallet to the protocol's vault and credits your account.</p>
+          <p><strong>2. Deposit USDC:</strong> Transfers USDC from your wallet to the protocol&apos;s vault and credits your account.</p>
           <p><strong>3. Start Trading:</strong> Use your deposited USDC as collateral for perpetual futures trading.</p>
         </div>
       </div>
